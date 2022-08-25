@@ -131,7 +131,7 @@ class DemoPayViewModel() : ViewModel() {
 
         //EncryptData
         encInputByteArray = encryptData(
-            "0000 08",
+            "0000 00",
             EnumKeyAlgorithm.DUKPT,
             inputByteArray
         )

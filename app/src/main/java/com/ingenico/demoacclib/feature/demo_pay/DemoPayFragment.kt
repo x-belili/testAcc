@@ -331,7 +331,7 @@ class DemoPayFragment : Fragment(), IStepGetCard, ISecurePayment, IStepGoOnChip,
 
         StepOnlinePin(SecurePayment, this).execute(
             OnlinePinModel(
-                "0000 04",
+                "0000 02",
                 EnumKeyAlgorithm.DUKPT,
                 cardDataModel.pan,
                 50
@@ -342,7 +342,7 @@ class DemoPayFragment : Fragment(), IStepGetCard, ISecurePayment, IStepGoOnChip,
     private fun startGoOnChip() {
         stepGoOnChip.execute(
             GoOnChipModel(
-                pinKeyId = "0000 04",
+                pinKeyId = "0000 02",
                 pinAlgorithm = EnumKeyAlgorithm.DUKPT,
                 pinTimeout = 40,
                 tagList = mutableListOf(
