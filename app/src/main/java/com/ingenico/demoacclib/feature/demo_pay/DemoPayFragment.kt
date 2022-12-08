@@ -1,6 +1,7 @@
 package com.ingenico.demoacclib.feature.demo_pay
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -69,6 +70,11 @@ class DemoPayFragment : Fragment(), IStepGetCard, ISecurePayment, IStepGoOnChip,
         binding.editTextValue.hint = "00"
         configCardModel()
 
+        binding.buttonNewProcess.setOnClickListener {
+            val intent = Intent(view.context, KeyDukptActivity::class.java)
+            startActivity(intent)
+        }
+
         binding.buttonStartTransaction.setOnClickListener {
             configAmount()
             if (valueAmount > 0)
@@ -109,8 +115,8 @@ class DemoPayFragment : Fragment(), IStepGetCard, ISecurePayment, IStepGoOnChip,
             0L else binding.editTextValue.text.toString().toLong()
         getCardModel.amount = Amount(
             value = valueAmount,  //Collection value
-            decimalShift = 2, //number of decimal places allowed
-            currencyCode = 840 //country currency code
+            decimalShift = 0, //number of decimal places allowed
+            currencyCode = 604 //country currency code
         )
     }
 
@@ -123,8 +129,8 @@ class DemoPayFragment : Fragment(), IStepGetCard, ISecurePayment, IStepGoOnChip,
             serviceType = ServiceType.PURCHASE, //Service type
             amount = Amount(
                 value = valueAmount,  //Collection value
-                decimalShift = 2, //number of decimal places allowed
-                currencyCode = 840 //country currency code
+                decimalShift = 0, //number of decimal places allowed
+                currencyCode = 604 //country currency code
             ),
             otherAmount = Amount(0),
             transactionType = TransactionType.PURCHASE, //Transaction type
@@ -329,9 +335,12 @@ class DemoPayFragment : Fragment(), IStepGetCard, ISecurePayment, IStepGoOnChip,
     private fun startPinOnline() {
         Log.e("startPinOnline", "startPinOnline")
 
+        Log.d("DemoPayViewModel", "DUKPT PIN : " + Constant.getKeyPrefix() + Constant.getKeyDukptPin())
+        Toast.makeText(context, "DUKPT PIN : " + Constant.getKeyPrefix() + " " + Constant.getKeyDukptPin(), Toast.LENGTH_LONG).show()
         StepOnlinePin(SecurePayment, this).execute(
             OnlinePinModel(
-                "0000 02",
+                //"0043 04",
+                Constant.getKeyPrefix() + " " + Constant.getKeyDukptPin(),
                 EnumKeyAlgorithm.DUKPT,
                 cardDataModel.pan,
                 50
@@ -340,9 +349,13 @@ class DemoPayFragment : Fragment(), IStepGetCard, ISecurePayment, IStepGoOnChip,
     }
 
     private fun startGoOnChip() {
+        //Log.d("LUCIFER", "REQUEST PIN")
+        Log.d("DemoPayViewModel", "DUKPT PIN : " + Constant.getKeyPrefix() + Constant.getKeyDukptPin())
+        Toast.makeText(context, "DUKPT PIN : " + Constant.getKeyPrefix() + " " + Constant.getKeyDukptPin(), Toast.LENGTH_LONG).show()
         stepGoOnChip.execute(
             GoOnChipModel(
-                pinKeyId = "0000 02",
+                //pinKeyId = "0043 04",
+                Constant.getKeyPrefix() + " " + Constant.getKeyDukptPin(),
                 pinAlgorithm = EnumKeyAlgorithm.DUKPT,
                 pinTimeout = 40,
                 tagList = mutableListOf(
@@ -351,7 +364,7 @@ class DemoPayFragment : Fragment(), IStepGetCard, ISecurePayment, IStepGoOnChip,
                     "9F03", "9F06", "9F07", "9F0D", "9F0E", "9F0F",
                     "9F10", "9F17", "9F12", "9F1A", "9F1E", "9F26",
                     "9F27", "9F33", "9F34", "9F35", "9F36", "9F37",
-                    "9F40", "9F53", "9F66"
+                    "9F40", "9F53", "9F66", "9F2D", "9F2E", "9F2F", "9F17", "99"
                 )
             )
         )
@@ -397,6 +410,7 @@ class DemoPayFragment : Fragment(), IStepGetCard, ISecurePayment, IStepGoOnChip,
     }
 
     override fun onOutputResult(result: Int, goOnChipResult: GoOnChipResult?) {
+        //Log.d("LUCIFER", "RESULT : " + result)
         when (result) {
             ResultCode.SPA_CANCEL -> {
                 Log.e("SPA_CANCEL_GoOnChipResult", "SPA_CANCEL.eMv")

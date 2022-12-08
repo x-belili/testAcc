@@ -2,6 +2,7 @@ package com.ingenico.demoacclib.feature.demo_pay
 
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import com.ingenico.acc.EmvParamsConfig
@@ -21,6 +22,7 @@ import java.io.ByteArrayOutputStream
 class DemoPayViewModel() : ViewModel() {
     var cardReadRetries = 0
     var transactionModel = TransactionModel()
+    var context2: Context? = null
 
     data class Result(
         var invalidTrack: Boolean? = false,
@@ -30,6 +32,7 @@ class DemoPayViewModel() : ViewModel() {
 
     fun getEmvInitialized(context: Context) = liveData(Dispatchers.IO) {
         emit(EmvParamsConfig(context).getDefault())
+        context2 = context
     }
 
     fun checkGetCardResult(getCardResult: GetCardResult?) = liveData(Dispatchers.IO) {
@@ -129,9 +132,12 @@ class DemoPayViewModel() : ViewModel() {
 
         val inputByteArray: ByteArray = stringHexToByteArray(input) ?: byteArrayOf()
 
+        Log.d("DemoPayViewModel", "DUKPT DATA : " + Constant.getKeyPrefix() + Constant.getKeyDukptData())
+//        Toast.makeText(context2, "DUKPT DATA : " + Constant.getKeyPrefix() + Constant.getKeyDukptData(), Toast.LENGTH_SHORT).show()
         //EncryptData
         encInputByteArray = encryptData(
-            "0000 00",
+            //"0043 08",
+            Constant.getKeyPrefix() + " " + Constant.getKeyDukptData(),
             EnumKeyAlgorithm.DUKPT,
             inputByteArray
         )
